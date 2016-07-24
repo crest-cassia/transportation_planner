@@ -31,28 +31,40 @@ def debug_wakayama
   runs=Run.where(status: :finished).in(simulator_id: "57065cb76468635bf1000000")
   # AM10_detail "57065cb76468635bf1000000"
   # AM10_all "56fb70ee6468635464000000"
-  binding.pry
 
-  # calc average stddev
-  @result_data = {}
-  @average = {}
-  @stddev = {}
-
+  
+  
   # read from datas
   # $OACIS_HOME/public/Result_development/simulator_id/parameter_set_id/id/result
+  @runs_ps = {}
   paths = {}
 
   runs.each{|run|
+    @runs_ps[run.parameter_set_id.to_s] ||= []
+    @runs_ps[run.parameter_set_id.to_s] << run
+
     paths[run.parameter_set_id.to_s] ||= []
     path = result_file_path(run)    
     paths[run.parameter_set_id.to_s] << path
-    collect_result(run)
   }
-  calc_means
+
+  # each parameter set
+  @runs_ps.each{|k,runs|
+    # calc average stddev
+    @result_data = {}
+    @average = {}
+    @stddev = {}
+
+    runs.each{|run| collect_result(run) }
+
+    calc_means
+  }
 
   # calc traffic-flow
   # (x: density(num/km), y: num/h)
   # Q(流量) = ρ(密度)*v(速度)  
+
+  binding.pry
 
 end
 #
@@ -78,7 +90,7 @@ def calc_means
   }
   
   @result_data.each{|k,vs|
-    div=vs.map{|v| (v-@average[k])**2 }.inject(:+)/vs.count
+    div = vs.map{|v| (v-@average[k])**2 }.inject(:+)/vs.count
     @stddev[k] = Math.sqrt(div)
   }
 end
