@@ -4,7 +4,7 @@ ENV['BUNDLE_GEMFILE'] = "/home/matsushima/Programs/oacis-module/Gemfile"
 require 'bundler/setup'
 # require "/home/matsushima/Programs/oacis/config/environment"
 require_relative "/data/sdb/oacis/config/environment"
-requrie_relative "mates_utils/traffic_flow"
+require_relative "mates_utils/traffic_flow"
 
 OACIS_HOME=ENV['OACIS_HOME']
 require 'json'
@@ -34,7 +34,7 @@ def debug_wakayama
   binding.pry
 
   # calc average stddev
-  @result_data
+  @result_data = {}
   @average = {}
   @stddev = {}
 
